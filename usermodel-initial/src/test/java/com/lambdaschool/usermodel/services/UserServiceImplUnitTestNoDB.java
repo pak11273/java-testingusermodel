@@ -125,6 +125,12 @@ public class UserServiceImplUnitTestNoDB
     @Test
     public void delete()
     {
+        Mockito.when(userrepos.findById(4L)).thenReturn(Optional.of(userList.get(0)));
+
+        Mockito.doNothing().when(userrepos) .deleteById(4L);
+
+        userService.delete(4);
+        assertEquals(5, userList.size());
     }
 
     @Test
