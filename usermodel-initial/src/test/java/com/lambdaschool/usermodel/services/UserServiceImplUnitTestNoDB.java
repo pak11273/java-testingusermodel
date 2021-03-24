@@ -106,9 +106,6 @@ public class UserServiceImplUnitTestNoDB
     {
         Mockito.when(userrepos.findById(1L)).thenReturn(Optional.of(userList.get(0)));
         assertEquals("test admin", userService.findUserById(1).getUsername());
-//        List<User> blah = userService.findAll();
-//        System.out.println(blah);
-//        assertEquals("blah", "blah");
     }
 
     @Test
@@ -118,8 +115,12 @@ public class UserServiceImplUnitTestNoDB
 
     @Test
     public void findAll()
-    {
-    }
+        {
+            Mockito.when(userrepos.findAll()).thenReturn(userList);
+
+            System.out.println(userService.findAll());
+            assertEquals(5, userService.findAll().size());
+        }
 
     @Test
     public void delete()
