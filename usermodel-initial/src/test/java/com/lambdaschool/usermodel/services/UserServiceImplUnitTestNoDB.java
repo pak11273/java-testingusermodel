@@ -136,9 +136,8 @@ public class UserServiceImplUnitTestNoDB
     @Test
     public void findByName()
     {
-//  Mockito.when(userrepos.findByUsername("whatever")).thenReturn(userList);
-//  assertEquals(3, userService.findByName("test miss kitty"));
-
+        Mockito.when(userrepos.findByUsername("test admin")).thenReturn(userList.get(0));
+        assertEquals("test admin", userService.findByName("test admin").getUsername());
     }
 
     @Test
