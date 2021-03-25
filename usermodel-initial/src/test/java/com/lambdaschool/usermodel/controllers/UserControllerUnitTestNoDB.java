@@ -233,8 +233,31 @@ public class UserControllerUnitTestNoDB
     }
 
     @Test
-    public void updateUser()
+    public void updateUser() throws Exception
     {
+        String apiUrl = "/users/user/{userid}";
+        String userName = "admin";
+        User u2 = new User(userName,
+                "password",
+                "admin2@lambdaschool.local");
+        u2.setUserid(2);
+        Role role1= new Role("ADMIN");
+        role1.setRoleid(1);
+        u2.getRoles().add(new UserRoles(u2, role1));
+
+        Mockito.when(userService.update(u2, 2L)).thenReturn(u2);
+        ObjectMapper mapper = new ObjectMapper();
+        String restaurantString = mapper.writeValueAsString(u2);
+
+        RequestBuilder rb = MockMvcRequestBuilders.put(apiUrl,
+                2L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(restaurantString);
+
+        mockMvc.perform(rb)
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print());
     }
 
     @Test
