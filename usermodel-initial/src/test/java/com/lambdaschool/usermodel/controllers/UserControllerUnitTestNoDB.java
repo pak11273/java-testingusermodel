@@ -227,10 +227,10 @@ public class UserControllerUnitTestNoDB
         mockMvc.perform(rb).andExpect(status().isCreated()).andDo(MockMvcResultHandlers.print());
     }
 
-    @Test
-    public void updateFullUser()
-    {
-    }
+//    @Test
+//    public void updateFullUser()
+//    {
+//    }
 
     @Test
     public void updateUser() throws Exception
@@ -274,8 +274,8 @@ public class UserControllerUnitTestNoDB
                 .andDo(MockMvcResultHandlers.print());
     }
 
-    @Test
-    public void getCurrentUserInfo()
-    {
-    }
+//    @Test
+//    public void getCurrentUserInfo()
+//    {
+//    }
 }

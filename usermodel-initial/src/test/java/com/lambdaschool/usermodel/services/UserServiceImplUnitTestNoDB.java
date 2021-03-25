@@ -149,19 +149,17 @@ public class UserServiceImplUnitTestNoDB
     public void save()
     {
         String userName = "isaac";
-        User u7 = new User(userName,
+        User u6 = new User(userName,
                 "password",
                 "isaac@lambdaschool.local");
 
-        u7.setUserid(10);
-        Role r1 = new Role("admin");
-        u7.getRoles().add(new UserRoles(u7, r1));
-        r1.setRoleid(1);
+        u6.setUserid(6);
 
-        Mockito.when(userrepos.save(any(User.class))).thenReturn(u7);
-        Mockito.when(userrepos.findById(1L)).thenReturn(Optional.of(u7));
+        Role r1 = new Role("ADMIN");
+        r1.setRoleid(6);
+        u6.getRoles().add(new UserRoles(u6, r1));
 
-        User addUser = userService.save(u7);
+        User addUser = userService.save(u6);
         assertNotNull(addUser);
         assertEquals(userName, addUser.getUsername());
     }
