@@ -9,6 +9,7 @@ import com.lambdaschool.usermodel.UserModelApplicationTesting;
 import com.lambdaschool.usermodel.models.User;
 import com.lambdaschool.usermodel.services.UserService;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -147,8 +148,27 @@ public class UserControllerUnitTestNoDB
     }
 
     @Test
-    public void getUserByName()
+    public void getUserByName() throws Exception
     {
+        String apiUrl = "/users/user/name/admin";
+
+        Mockito.when(userService.findByName("admin"))
+                .thenReturn(userList.get(0));
+
+        RequestBuilder rb = MockMvcRequestBuilders.get(apiUrl)
+                .accept(MediaType.APPLICATION_JSON);
+        MvcResult r = mockMvc.perform(rb)
+                .andReturn(); // this could throw an exception
+        String tr = r.getResponse()
+                .getContentAsString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        String er = mapper.writeValueAsString(userList.get(0));
+
+        System.out.println("Expect: " + er);
+        System.out.println("Actual: " + tr);
+
+        Assert.assertEquals("Rest API Returns List", er, tr);
     }
 
     @Test
@@ -178,51 +198,6 @@ public class UserControllerUnitTestNoDB
 
     @Test
     public void getCurrentUserInfo()
-    {
-    }
-
-    @Test
-    public void testListAllUsers()
-    {
-    }
-
-    @Test
-    public void testGetUserById()
-    {
-    }
-
-    @Test
-    public void testGetUserByName()
-    {
-    }
-
-    @Test
-    public void testGetUserLikeName()
-    {
-    }
-
-    @Test
-    public void testAddNewUser()
-    {
-    }
-
-    @Test
-    public void testUpdateFullUser()
-    {
-    }
-
-    @Test
-    public void testUpdateUser()
-    {
-    }
-
-    @Test
-    public void testDeleteUserById()
-    {
-    }
-
-    @Test
-    public void testGetCurrentUserInfo()
     {
     }
 }
