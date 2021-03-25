@@ -1,10 +1,12 @@
 package com.lambdaschool.usermodel.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lambdaschool.usermodel.UserModelApplicationTesting;
 import com.lambdaschool.usermodel.models.Role;
 import com.lambdaschool.usermodel.models.User;
 import com.lambdaschool.usermodel.models.UserRoles;
 import com.lambdaschool.usermodel.models.Useremail;
+import com.lambdaschool.usermodel.repository.RoleRepository;
 import com.lambdaschool.usermodel.repository.UserRepository;
 import org.junit.After;
 import org.junit.Before;
@@ -42,6 +44,9 @@ public class UserServiceImplUnitTestNoDB
 
     @MockBean
     public UserRepository userrepos;
+
+    @MockBean
+    public RoleRepository rolerepos;
 
     public List<User> userList = new ArrayList<>();
 
@@ -143,15 +148,59 @@ public class UserServiceImplUnitTestNoDB
     @Test
     public void save()
     {
+        String userName = "isaac";
+        User u7 = new User(userName,
+                "password",
+                "isaac@lambdaschool.local");
+
+        u7.setUserid(10);
+        Role r1 = new Role("admin");
+        u7.getRoles().add(new UserRoles(u7, r1));
+        r1.setRoleid(1);
+
+        Mockito.when(userrepos.save(any(User.class))).thenReturn(u7);
+        Mockito.when(userrepos.findById(1L)).thenReturn(Optional.of(u7));
+
+        User addUser = userService.save(u7);
+        assertNotNull(addUser);
+        assertEquals(userName, addUser.getUsername());
     }
 
     @Test
-    public void update()
+    public void update() throws JsonProcessingException
     {
+        String userName = "Test isaac2";
+        User u2 = new User(userName,
+                "password",
+                "isaac2@lambdaschool.local");
+
+        u2.setUserid(20);
+        Role r2 = new Role("admin");
+        r2.setRoleid(20);
+
+        r2.getUsers().add(new UserRoles(u2, r2));
+
+        // I need a copy of u2 to send to update so the original u2 is not changed.
+        // I am using Jackson to make a clone of the object
+        ObjectMapper objectMapper = new ObjectMapper();
+        User r3 = objectMapper.readValue(objectMapper.writeValueAsString(r2), User.class);
+
+        Mockito.when(userrepos.findById(20L)).thenReturn(Optional.of(r3));
+        Mockito.when(rolerepos.findById(20L)).thenReturn(Optional.of(r2));
+        Mockito.when(userrepos.save(any(User.class))).thenReturn(u2);
+        User addUser = userService.update(u2, 20);
+
+        assertNotNull(addUser);
+        assertEquals(userName, addUser.getUsername());
     }
 
     @Test
     public void deleteAll()
     {
+        Mockito.when(userrepos.findById(4L)).thenReturn(Optional.of(userList.get(0)));
+        Mockito.doNothing().when(userrepos).deleteById(4L);
+
+        userService.delete(4);
+        assertEquals(5, userList.size());
     }
 }
