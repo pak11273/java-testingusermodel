@@ -172,8 +172,23 @@ public class UserControllerUnitTestNoDB
     }
 
     @Test
-    public void getUserLikeName()
+    public void getUserLikeName() throws Exception
     {
+        String apiUrl = "/users/user/name/like/ad";
+
+        Mockito.when(userService.findByNameContaining("ad")).thenReturn(userList);
+
+        RequestBuilder rb = MockMvcRequestBuilders.get(apiUrl).accept(MediaType.APPLICATION_JSON);
+        MvcResult r = mockMvc.perform(rb).andReturn(); // this could throw an exception
+        String tr = r.getResponse().getContentAsString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        String er = mapper.writeValueAsString(userList);
+
+        System.out.println("Expect: " + er);
+        System.out.println("Actual: " + tr);
+
+        Assert.assertEquals("Rest API Returns List", er, tr);
     }
 
     @Test
