@@ -130,8 +130,20 @@ public class UserControllerUnitTestNoDB
     }
 
     @Test
-    public void getUserById()
+    public void getUserById() throws Exception
     {
+        String apiUrl = "/users/user/1";
+        Mockito.when(userService.findUserById(1)).thenReturn(userList.get(0));
+
+        RequestBuilder rb = MockMvcRequestBuilders.get(apiUrl).accept(MediaType.APPLICATION_JSON);
+        MvcResult r = mockMvc.perform(rb).andReturn();
+        String tr = r.getResponse().getContentAsString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        String er = mapper.writeValueAsString(userList.get(0));
+
+        System.out.println(tr);
+        assertEquals(er, tr);
     }
 
     @Test
