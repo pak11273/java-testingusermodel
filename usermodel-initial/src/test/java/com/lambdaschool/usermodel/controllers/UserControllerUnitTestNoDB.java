@@ -1,5 +1,7 @@
 package com.lambdaschool.usermodel.controllers;
 
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lambdaschool.usermodel.models.Role;
 import com.lambdaschool.usermodel.models.UserRoles;
@@ -28,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -35,6 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.ArgumentMatchers.any;
 
 @RunWith(SpringRunner.class)
 @WithMockUser(username = "admin", roles = {"USER", "ADMIN"})
@@ -111,7 +116,9 @@ public class UserControllerUnitTestNoDB
     }
 
     @After
-    public void tearDown() throws Exception { }
+    public void tearDown() throws Exception
+    {
+    }
 
     @Test
     public void listAllUsers() throws Exception
@@ -192,8 +199,32 @@ public class UserControllerUnitTestNoDB
     }
 
     @Test
-    public void addNewUser()
+    public void addNewUser() throws Exception
     {
+        String apiUrl = "/users/user";
+
+        String userName = "admin2";
+        User u4 = new User(userName,
+                "password",
+                "admin2@lambdaschool.local");
+        u4.setUserid(3);
+
+        Role roleType = new Role("ADMIN");
+        roleType.setRoleid(3);
+
+        u4.getRoles().add(new UserRoles(u4, roleType));
+
+        ObjectMapper mapper = new ObjectMapper();
+        String restaurantString = mapper.writeValueAsString(u4);
+
+        Mockito.when(userService.save(any(User.class))).thenReturn(u4);
+
+        RequestBuilder rb = MockMvcRequestBuilders.post(apiUrl)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(restaurantString);
+
+        mockMvc.perform(rb).andExpect(status().isCreated()).andDo(MockMvcResultHandlers.print());
     }
 
     @Test
