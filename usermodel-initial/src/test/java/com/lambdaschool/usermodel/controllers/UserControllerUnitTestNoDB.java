@@ -261,8 +261,17 @@ public class UserControllerUnitTestNoDB
     }
 
     @Test
-    public void deleteUserById()
+    public void deleteUserById() throws Exception
     {
+        String apiUrl = "/users/user/{userid}";
+
+        RequestBuilder rb = MockMvcRequestBuilders.delete(apiUrl,
+                "2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+        mockMvc.perform(rb)
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print());
     }
 
     @Test
